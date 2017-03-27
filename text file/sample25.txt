@@ -1,0 +1,236 @@
+31/01/2017
+
+
+#include<stdio.h>
+#include<GL/glut.h>
+float a;
+void timer(int v)
+{
+if(a<=11)
+{ 
+      a=a+0.2;
+glutPostRedisplay();
+glutTimerFunc(8,timer,0);
+}
+else
+{
+    a=15;
+}
+}
+void display(void)
+{
+     glClear(GL_COLOR_BUFFER_BIT);
+     glColor3f(0.0,1.0,0.0);
+     glBegin(GL_POLYGON);
+     glVertex2i(0,0);
+     glVertex2i(0,4);
+     glVertex2i(20,4);
+     glVertex2i(20,0);
+     glEnd();
+     
+     glColor3f(1.0,0.0,0.0);
+     glPushMatrix();
+     glTranslated(10,6+a,0);
+     glutSolidSphere(2,100,100);
+     glPopMatrix();
+     
+     
+     glColor3f(0.5,0.3,0.5);
+     glBegin(GL_POLYGON);
+     glVertex2i(0,11);
+     glVertex2i(6,16);
+     glVertex2i(10,13);
+     glVertex2i(15,16);
+     glVertex2i(20,11);
+     glEnd();
+     
+     glColor3f(0.0,0.0,0.0);
+     glBegin(GL_POLYGON);
+     glVertex2i(0,4);
+     glVertex2i(0,11);
+     glVertex2i(20,11);
+     glVertex2i(20,4);
+     glEnd();
+     
+     glColor3f(1.0,0.0,0.0);
+     glBegin(GL_POLYGON);
+     glVertex2i(10,1);
+     glVertex2i(14,1);
+     glVertex2i(14,7);
+     glVertex2i(10,7);
+     glEnd();
+     glColor3f(0.9,0.9,0.0);
+     glBegin(GL_POLYGON);
+     glVertex2i(9,1);
+     glVertex2i(15,1);
+     glVertex2i(15,2);
+     glVertex2i(9,2);
+     glEnd();
+     glColor3f(1.0,1.0,0.0);
+     glBegin(GL_POLYGON);
+     glVertex2i(14,7);
+     glVertex2i(10,7);
+     glVertex2i(12,10);
+     glEnd();
+     glFlush();
+}
+     int main(int argc,char **argv)
+{
+    printf("Hello world");
+    glutInit(&argc,argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize(400,400);
+    glutInitWindowPosition(0,100);
+    glutCreateWindow("CG Lab");
+    glClearColor(0.0,1.0,1.0,0.0);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0,20.0,0.0,20.0,0.0,20.0);
+    glutDisplayFunc(display);
+    timer(0);
+    glutMainLoop();
+}
+
+
+
+
+
+07/02/2017
+
+
+
+lab program 1
+
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<GL/glut.h>
+float v[4][3]={{0,1,1},{1,0,0},{0,2,0},{-1,0,0}};
+int n;
+float theta;
+void timer(int v)
+{
+     theta=theta+0.4;
+     glutPostRedisplay();
+     glutTimerFunc(5,timer,0);
+}
+void triangle(float a[],float b[],float c[])
+{
+     glBegin(GL_POLYGON);
+     glVertex3fv(a);
+     glVertex3fv(b);
+     glVertex3fv(c);
+     glEnd();
+}
+void divide_triangle(float a[],float b[],float c[],int m)
+{
+     float v1[3],v2[3],v3[3];
+     int j;
+     if(m>0)
+     {
+            for(j=0;j<3;j++)
+            {
+                            v1[j]=(a[j]+b[j])/2;     
+                            v2[j]=(a[j]+c[j])/2;  
+                            v3[j]=(c[j]+b[j])/2;
+            }
+            divide_triangle(a,v1,v2,m-1); 
+            divide_triangle(c,v2,v3,m-1); 
+            divide_triangle(b,v3,v1,m-1);
+     }
+     else
+     {
+         triangle(a,b,c);
+     }
+}
+void tetrahedron(int m)
+{
+     glColor3f(1.0,0.0,0.0);
+     divide_triangle(v[0],v[1],v[2],m); 
+     glColor3f(0.0,1.0,0.0);
+     divide_triangle(v[3],v[2],v[1],m);
+     glColor3f(0.0,0.0,1.0);
+     divide_triangle(v[0],v[3],v[1],m);
+     glColor3f(0.0,0.0,0.0);
+     divide_triangle(v[0],v[2],v[3],m); 
+}
+void display()
+{
+     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+     glMatrixMode(GL_PROJECTION);
+     glLoadIdentity();
+     glOrtho(-3.0,3.0,-3.0,3.0,-10.0,10.0);
+     glRotatef(0+theta,1,1,1);
+     tetrahedron(n);
+     glFlush();
+}
+int main(int argc,char **argv)
+{
+    printf("No. of divisions ?  ");
+    scanf("%d",&n);
+    glutInit(&argc,argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(500,500);
+    glutCreateWindow("3DGASKET");
+    glutInitWindowPosition(0,0);
+    glutDisplayFunc(display);
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(1.0,1.0,1.0,1.0);
+    timer(0);
+    glutMainLoop();
+}
+
+
+
+/*Lab program number 2    */
+
+
+
+
+#define dx 10
+#define dy 15
+#define maxx 20
+#define maxy 20
+GLfloat x[maxx],y[maxy],x0=100,y0=100;
+GLint i,j,k;
+void display(void)
+{
+ glClear(GL_COLOR_BUFFER_BIT);
+ glMatrixMode(GL_PROJECTION);
+ glLoadIdentity();
+ gluOrtho2D(0,499,0,499);
+ for(i=0;i<maxx;i++)
+                  x[i]=x0+i*dx;
+ for(i=0;i<maxy;i++)
+                  y[i]=y0+i*dy;
+ for(i=0;i<maxx-1;i++)
+ {
+                      for(j=0;j<maxy-1;j++)
+                      {
+                                           glBegin(GL_LINE_LOOP);
+                                           glColor3f(1.0,0.0,0.0);
+                                           glVertex2f(x[i],y[j]);
+                                           glVertex2f(x[i],y[j+1]);
+                                           glVertex2f(x[i+1],y[j+1]);
+                                           glVertex2f(x[i+1],y[j]);
+                                           glEnd();
+                                           glFlush();
+                                           for(k=0;k<9999999;k++);
+                                           }
+                      }
+ //glFlush();
+}
+int main(int argc,char **argv)
+{
+    glutInit(&argc,argv);
+    glutInitDisplayMode(GLUT_SINGLE |GLUT_RGB);
+    glutInitWindowSize(500,500);
+    glutCreateWindow("Rectangular Mesh");
+    glutInitWindowPosition(100,100);
+    glutDisplayFunc(display);
+    glClearColor(1.0,1.0,1.0,1.0);
+    glutMainLoop();
+}
+
